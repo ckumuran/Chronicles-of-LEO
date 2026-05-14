@@ -28,7 +28,7 @@ Grass fields with circular studs. Mountains made of grey 2x4s. Water that looks 
 | LEGO-Style Plastic Materials | Every block has actual stud geometry. |
 | Block Placing & Breaking | You can break things & place things. |
 | First-Person Controls | WASD to move, mouse to look, Space to jump. |
-| Brick Particle Effects | Blocks shatter into stud particles, inspired from O.G. LEGO games |
+| Brick Particle Effects | Blocks shatter into stud particles, inspired from classic LEGO games |
 
 ---
 

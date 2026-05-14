@@ -11,10 +11,9 @@
 
 ## What is this
 
-BRIXIT is a first-person survival game set in an infinite procedurally-generated world where everything is LEGO.
-Grass fields with circular studs. Mountains made of grey 2x4s. Water that looks like blue flat plates.
+BRIXIT is a first-person survival game set in an infinite procedurally-generated world where everything is LEGO.  
 
-![BRIXIT Gameplay](./gameplay.png)
+![BRIXIT Gameplay](./src/BRIXITGP.png)
 
 ---
 
@@ -26,34 +25,15 @@ Grass fields with circular studs. Mountains made of grey 2x4s. Water that looks 
 | LEGO-Style Plastic Materials | Every block has actual stud geometry. |
 | Block Placing & Breaking | You can break things & place things. |
 | First-Person Controls | WASD to move, mouse to look, Space to jump. |
-| Brick Particle Effects | Blocks shatter into stud particles, inspired from classic LEGO games |
+| Brick Particle Effects | Blocks shatter into stud particles, inspired by classic LEGO games |
 
 ---
 
 ## Controls
 
-```
+```txt
 WASD          — Move 
 Mouse         — Look around 
 Left Click    — Break block
 Right Click   — Place block
 Space         — Jump 
-```
-
----
-
-## Tech Stack
-
-- **React**  
-- **Vite** 
-- **Three.js** 
-- **React Three Fiber** 
-- **JavaScript** 
-
----
-
-<div align="center">
-
-Built by C.Kumaran 🧱⛏️
-
-</div>

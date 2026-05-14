@@ -46,18 +46,16 @@ Space         — Jump
 
 ## Tech Stack
 
-- **React** — Because everything is React now. Accept it.
-- **Vite** — So fast it made us uncomfortable
-- **Three.js** — The reason this repo exists and the reason we lost sleep
-- **React Three Fiber** — Three.js but declarative. It slaps.
-- **JavaScript** — 87.5% of the codebase. The other 12.5% is HTML and CSS pretending to work.
+- **React**  
+- **Vite** 
+- **Three.js** 
+- **React Three Fiber** 
+- **JavaScript** 
 
 ---
 
 <div align="center">
 
 Built by C.Kumaran.
-
-*Now go build something. And don't step on the studs.*
 
 </div>

@@ -2,8 +2,6 @@
 
 # BRIXIT
 
-**BRIXIT means BRIXIT.**
-
 ![Version](https://img.shields.io/badge/version-v0.1.0-brightgreen?style=flat-square)
 ![Built With](https://img.shields.io/badge/built%20with-Three.js-black?style=flat-square)
 
@@ -56,6 +54,6 @@ Space         — Jump
 
 <div align="center">
 
-Built by C.Kumaran.
+Built by C.Kumaran 🧱⛏️
 
 </div>

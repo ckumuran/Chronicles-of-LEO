@@ -2,63 +2,111 @@
 
 # BRIXIT
 
-### *BRIXIT means BRIXIT*
-**A Minecraft-inspired sandbox survival game — where every block is a LEGO.**
+**BRIXIT means BRIXIT. Just like Brexit means Brexit. Nobody knows what either means. We build anyway.**
 
-Mine. Build. Survive. In a world built entirely from studs.
+Minecraft had a baby with a LEGO set. The baby is unhinged. The baby is BRIXIT.
 
-![Version](https://img.shields.io/badge/version-v0.1.0-brightgreen?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-blue?style=for-the-badge)
-![Built With](https://img.shields.io/badge/built%20with-Three.js-black?style=for-the-badge&logo=threedotjs)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+Mine blocks. Build structures. Explore infinite terrain. Step on studs barefoot at 3am.
+
+![Version](https://img.shields.io/badge/version-v0.1.0-brightgreen?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
+![Built With](https://img.shields.io/badge/built%20with-Three.js-black?style=flat-square)
+![Therapy](https://img.shields.io/badge/therapy-required-red?style=flat-square)
 
 </div>
 
 ---
 
-## Gameplay
-BRIXIT is a fps survival game set in an infinite procedurally-generated world — except every single block has the satisfying plastic texture of a LEGO brick. Grass fields shimmer with circular studs. Mountains are made of grey 2×4s. Water pools in blue flat plates. It's Minecraft, but make it tactile.
+## What is this
 
-### Screenshot
+BRIXIT is a first-person survival game set in an infinite procedurally-generated world where every single block is a LEGO.
+
+Grass fields with circular studs. Mountains made of grey 2x4s. Water that looks like blue flat plates. It's Minecraft, except your childhood toy collection somehow became a survival situation. You will mine. You will build. You will question your life choices. You will build anyway.
 
 ![BRIXIT Gameplay](./gameplay.png)
 
+*Look at those studs.*
+
 ---
 
-##  Features
+## Features
 
 | Feature | Description |
 |---|---|
-|  **Infinite Procedural Terrain** | Endlessly generated landscapes with biomes, hills, and water |
-|  **LEGO-Style Plastic Materials** | Every block surface rendered with stud geometry and plastic PBR shading |
-|  **Block Placing & Breaking** | Mine any block, place it anywhere — full voxel sandbox freedom |
-|  **Smooth First-Person Controls** | WASD to move, mouse to look, Space to jump |
-|  **Dynamic Lighting** | Real-time shadows and ambient light that change with the world |
-|  **Chunk Generation** | Efficient chunk-based world loading for smooth performance |
-|  **Inventory System** | Collect blocks and manage your brick stash |
-|  **Stylized Voxel Graphics** | Vibrant colors — green grass, brown dirt, blue water, grey stone |
-|  **Brick Particle Effects** | Blocks explode into satisfying LEGO stud particles on break |
+| Infinite Procedural Terrain | Endless world. Endless possibilities. Endless existential dread. |
+| LEGO-Style Plastic Materials | Every block has actual stud geometry. This took way too long. You're welcome. |
+| Block Placing & Breaking | You can break things AND put them back. Therapy in game form. |
+| First-Person Controls | WASD to move, mouse to look, Space to jump. Yes, revolutionary. |
+| Dynamic Lighting | Real-time shadows. The blocks look pretty. Please notice. |
+| Chunk Generation | The world loads in chunks so your browser doesn't explode. |
+| Inventory System | Collect blocks. Hoard them. Never use them. Just like real LEGO. |
+| Stylized Voxel Graphics | A crayon box had a baby with a GPU. |
+| Brick Particle Effects | Blocks shatter into stud particles. Deeply satisfying. Slightly violent. |
 
 ---
 
 ## Controls
 
 ```
-WASD          — Move
-Mouse         — Look around
+WASD          — Move (like every game since 1998)
+Mouse         — Look around (like having eyes)
 Left Click    — Break block
 Right Click   — Place block
-Space         — Jump
+Space         — Jump (avoid your problems)
 ```
 
 ---
 
 ## Tech Stack
 
--  **React** — UI & component architecture
--  **Vite** — Blazing fast dev server & bundler
--  **Three.js** — 3D rendering engine
--  **React Three Fiber** — Declarative Three.js in React
--  **JavaScript** — 87.5% of the codebase
+- **React** — Because everything is React now. Accept it.
+- **Vite** — So fast it made us uncomfortable
+- **Three.js** — The reason this repo exists and the reason we lost sleep
+- **React Three Fiber** — Three.js but declarative. It slaps.
+- **JavaScript** — 87.5% of the codebase. The other 12.5% is HTML and CSS pretending to work.
 
 ---
+
+## Getting Started
+
+```bash
+git clone https://github.com/ckumuran/brixit.git
+cd brixit
+npm install        # go make a coffee
+npm run dev        # open localhost:5173 and lose your afternoon
+```
+
+---
+
+## Roadmap
+
+- [ ] Crafting system *(the big one)*
+- [ ] Day/Night cycle *(so you can be miserable in the dark too)*
+- [ ] More biomes — desert, snow, jungle
+- [ ] Mob enemies *(also made of LEGOs)*
+- [ ] Multiplayer *(ask again in 6 months)*
+- [ ] Save/Load worlds
+
+---
+
+## Contributing
+
+Found a bug? Open an issue. Have a feature idea? Open an issue. Just want to say hi? Open an issue. Issues are friendship.
+
+PRs welcome. We will review them eventually. We are also human beings with feelings and snacks.
+
+---
+
+## License
+
+MIT — do whatever you want, just don't claim you invented LEGO.
+
+---
+
+<div align="center">
+
+BRIXIT means BRIXIT.
+
+*Now go build something. And don't step on the studs.*
+
+</div>

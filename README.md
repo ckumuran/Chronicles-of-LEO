@@ -49,7 +49,7 @@ Space         — Jump
 
 ## Working Demo
 
-![BRIXIT Gameplay](./src/BRIXITGP.png)
+![BRIXIT Gameplay](./src/BRIXIT.png)
 
 ---
 

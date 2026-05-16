@@ -1,8 +1,19 @@
-export default class PhysicsEngine {
-  constructor() {
-    this.gravity = -0.015;
-  }
-  applyGravity(player) {
-    player.velocity.y += this.gravity;
-  }
+import { applyGravity } from "./Gravity";
+export default class PhysicsEngine{
+update(
+player,
+velocity,
+delta
+){
+applyGravity(
+velocity,
+delta
+);
+player.position.y+=
+velocity.y*delta;
+if(player.position.y<2){
+player.position.y=2;
+velocity.y=0;
+}
+}
 }

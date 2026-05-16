@@ -4,6 +4,7 @@ import { Physics } from '@react-three/rapier'
 import World from './world/World'
 import Player from './player/Player'
 import Crosshair from './ui/Crosshair'
+import { worldBlocks } from "./world/worldData";
 export default function App() {
   return (
     <>
@@ -26,7 +27,7 @@ export default function App() {
         />
         <Physics>
           <World />
-          <Player />
+         <Player blocks={worldBlocks} />
         </Physics>
         <PointerLockControls />
       </Canvas>

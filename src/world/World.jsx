@@ -1,29 +1,101 @@
-import BrickBlock from '../blocks/BrickBlock'
+import { useEffect, useMemo, useState } from "react";
+import ChunkManager from "../engine/chunk/ChunkManager";
+import ChunkRenderer from "../engine/chunk/ChunkRenderer";
+import { generateWorld } from "./generateWorld";
+import { colors } from "../utils/colors";
+import useBlockInteraction from "../hooks/useBlockInteraction";
+import BlockOutline from "../blocks/BlockOutline";
+import WaterSystem from "../engine/water/WaterSystem";
 export default function World() {
-  const size = 30
-  const blocks = []
-  for (let x = -size; x < size; x++) {
-    for (let z = -size; z < size; z++) {
-      const height =
-        Math.floor(
-          Math.sin(x * 0.3) * 2 +
-          Math.cos(z * 0.3) * 2 +
-          4
-        )
-      for (let y = 0; y < height; y++) {
-        let color = '#b87a3d'
-        if (y === height - 1) {
-          color = '#57d657'
-        }
-        blocks.push(
-          <BrickBlock
-            key={`${x}-${y}-${z}`}
-            position={[x, y, z]}
-            color={color}
-          />
-        )
-      }
+  const [selected, setSelected] = useState(null);
+  const [playerChunk] = useState({
+    x: 0,
+    z: 0
+  });
+  const chunkManager = useMemo(() => {
+    return new ChunkManager();
+  }, []);
+  useEffect(() => {
+    const generatedBlocks =
+      generateWorld();
+    for (const block of generatedBlocks) {
+
+      const chunkX =
+        Math.floor(block.x / 16);
+
+      const chunkZ =
+        Math.floor(block.z / 16);
+
+      const chunk =
+        chunkManager.loadChunk(
+          chunkX,
+          chunkZ
+        );
+
+      chunk.addBlock(block);
     }
-  }
-  return <>{blocks}</>
+  }, [chunkManager]);
+  const visibleChunks =
+    chunkManager.getVisibleChunks(
+      playerChunk.x,
+      playerChunk.z,
+      2
+    );
+  const {
+    breakBlock,
+    placeBlock
+  } = useBlockInteraction([]);
+  return (
+    <>
+      <WaterSystem />
+      {visibleChunks.map((chunk, index) => (
+        <group key={index}>
+          {chunk.blocks.map((block) => (
+            <group
+              key={
+                `${block.x}-${block.y}-${block.z}`
+              }
+              onPointerOver={() => {
+                setSelected([
+                  block.x,
+                  block.y,
+                  block.z
+                ]);
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                breakBlock(block);
+                chunk.removeBlock(
+                  block.x,
+                  block.y,
+                  block.z
+                );
+              }}
+              onContextMenu={(e) => {
+                e.stopPropagation();
+                const newBlock = {
+                  x: block.x,
+                  y: block.y + 1,
+                  z: block.z,
+                  type: "red"
+                };
+                chunk.addBlock(newBlock);
+                placeBlock(block);
+              }}
+            >
+              <ChunkRenderer
+                chunk={{
+                  blocks: [block]
+                }}
+                colors={colors}
+              />
+            </group>
+          ))}
+        </group>
+      ))}
+      <BlockOutline
+        position={selected}
+      />
+    </>
+  );
 }

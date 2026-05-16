@@ -1,3 +1,6 @@
-export function applyGravity(player) {
-  player.velocity.y -= 0.015;
+export function applyGravity(
+velocity,
+delta
+){
+velocity.y-=25*delta;
 }

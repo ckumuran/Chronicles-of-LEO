@@ -4,18 +4,18 @@ blocks
 ){
 for(const block of blocks){
 const dx=Math.abs(
-player.x-block.x
+player.position.x-block.x
 );
 const dy=Math.abs(
-player.y-block.y
+player.position.y-block.y
 );
 const dz=Math.abs(
-player.z-block.z
+player.position.z-block.z
 );
 if(
-dx<0.8 &&
-dy<1.5 &&
-dz<0.8
+dx<0.9 &&
+dy<1.7 &&
+dz<0.9
 ){
 return true;
 }

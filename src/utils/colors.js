@@ -1,7 +1,11 @@
-export const BLOCK_COLORS = {
-  grass: '#57d657',
-  dirt: '#b87a3d',
-  stone: '#9e9e9e',
-  water: '#4aa3ff',
-  lava: '#ff6a00'
+import { BlockRegistry }
+from "../world/BlockRegistry";
+
+export const colors={};
+
+for(const key in BlockRegistry){
+
+colors[key]=
+BlockRegistry[key].color;
+
 }

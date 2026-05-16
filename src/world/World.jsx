@@ -18,6 +18,11 @@ from "./generateWorld";
 import { colors }
 from "../utils/colors";
 
+import {
+loadChunk
+}
+from "../engine/save/SaveSystem";
+
 export default function World(){
 
 const [selected,setSelected]=
@@ -47,7 +52,11 @@ x,
 z
 );
 
+const savedChunk=
+loadChunk(x,z);
+
 chunk.blocks=
+savedChunk ||
 generateChunk(x,z);
 
 chunks.push(chunk);

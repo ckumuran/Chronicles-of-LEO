@@ -1,15 +1,16 @@
 import { Canvas,useThree } from "@react-three/fiber";
-
 import { useEffect } from "react";
 
 import World from "./world/World";
-
 import Player from "./player/Player";
 
 import Crosshair from "./ui/Crosshair";
 
 import { setupLighting }
 from "./engine/lighting/LightingEngine";
+
+import { worldBlocks }
+from "./world/worldData";
 
 function SceneSetup(){
 
@@ -42,7 +43,9 @@ position:[0,5,10]
 
 <World />
 
-<Player />
+<Player
+blocks={worldBlocks}
+/>
 
 </Canvas>
 

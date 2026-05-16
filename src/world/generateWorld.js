@@ -1,21 +1,50 @@
-import { worldBlocks } from "./worldData";
-import { getHeight } from "../utils/terrain";
-export function generateWorld() {
-  for (let x = -20; x < 20; x++) {
-    for (let z = -20; z < 20; z++) {
-      const height = getHeight(x, z);
-      for (let y = 0; y < height; y++) {
-        worldBlocks.push({
-          x,
-          y,
-          z,
-          type: y === height - 1 ? "grass" : "dirt"
-        });
+import { getHeight }
+from "../utils/terrain";
 
-      }
+export function generateChunk(
+chunkX,
+chunkZ
+){
 
-    }
+const blocks=[];
 
-  }
+for(let x=0;x<16;x++){
+
+for(let z=0;z<16;z++){
+
+const worldX=
+chunkX*16+x;
+
+const worldZ=
+chunkZ*16+z;
+
+const height=
+getHeight(
+worldX,
+worldZ
+);
+
+for(let y=0;y<height;y++){
+
+blocks.push({
+
+x:worldX,
+y,
+z:worldZ,
+
+type:
+y===height-1
+?"grass"
+:"dirt"
+
+});
+
+}
+
+}
+
+}
+
+return blocks;
 
 }

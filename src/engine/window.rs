@@ -118,7 +118,7 @@ impl Window {
             );
         }
 
-        self.renderer.render();
+        self.renderer.render(&self.camera);
 
         self.window.swap_buffers();
     }

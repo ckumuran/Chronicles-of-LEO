@@ -8,6 +8,8 @@ pub enum BlockType {
     Stone,
 
     Water,
+
+    Torch,
 }
 
 impl BlockType {
@@ -19,6 +21,8 @@ impl BlockType {
             BlockType::Air => false,
 
             BlockType::Water => false,
+
+            BlockType::Torch => false,
 
             _ => true,
         }
@@ -32,7 +36,21 @@ impl BlockType {
 
             BlockType::Water => true,
 
+            BlockType::Torch => true,
+
             _ => false,
+        }
+    }
+
+    pub fn emits_light(
+        &self
+    ) -> u8 {
+
+        match self {
+
+            BlockType::Torch => 14,
+
+            _ => 0,
         }
     }
 
@@ -44,11 +62,15 @@ impl BlockType {
 
             BlockType::Grass => (0, 0),
 
+            BlockType::Grass => (0,0),
+
             BlockType::Dirt => (2, 0),
 
             BlockType::Stone => (3, 0),
 
             BlockType::Water => (4, 0),
+
+            BlockType::Torch => (5, 0),
 
             _ => (0, 0),
         }
@@ -68,6 +90,8 @@ impl BlockType {
 
             BlockType::Water => (4, 0),
 
+            BlockType::Torch => (5, 0),
+
             _ => (0, 0),
         }
     }
@@ -76,17 +100,6 @@ impl BlockType {
         &self
     ) -> (u32, u32) {
 
-        match self {
-
-            BlockType::Grass => (2, 0),
-
-            BlockType::Dirt => (2, 0),
-
-            BlockType::Stone => (3, 0),
-
-            BlockType::Water => (4, 0),
-
-            _ => (0, 0),
-        }
+        self.texture_index_side()
     }
 }

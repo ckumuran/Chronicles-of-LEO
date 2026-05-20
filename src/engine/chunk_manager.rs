@@ -1,10 +1,23 @@
-use std::collections::HashMap;
+use std::collections::{
+    HashMap,
+    HashSet,
+};
+
+use crossbeam_channel::{
+    unbounded,
+    Receiver,
+    Sender,
+};
 
 use crate::engine::chunk::Chunk;
 use crate::engine::chunk_render_data::ChunkRenderData;
-use crate::engine::terrain::TerrainGenerator;
+use crate::engine::chunk_worker::{
+    ChunkJob,
+    ChunkResult,
+    ChunkWorker,
+};
 
-pub const RENDER_DISTANCE: i32 = 4;
+pub const RENDER_DISTANCE: i32 = 6;
 
 pub struct ChunkManager {
 
@@ -20,12 +33,34 @@ pub struct ChunkManager {
             ChunkRenderData
         >,
 
-    terrain: TerrainGenerator,
+    generating:
+        HashSet<(i32, i32)>,
+
+    job_sender:
+        Sender<ChunkJob>,
+
+    result_receiver:
+        Receiver<ChunkResult>,
 }
 
 impl ChunkManager {
 
     pub fn new() -> Self {
+
+        let (
+            job_sender,
+            job_receiver,
+        ) = unbounded();
+
+        let (
+            result_sender,
+            result_receiver,
+        ) = unbounded();
+
+        ChunkWorker::start(
+            job_receiver,
+            result_sender,
+        );
 
         Self {
 
@@ -33,8 +68,11 @@ impl ChunkManager {
 
             render_data: HashMap::new(),
 
-            terrain:
-                TerrainGenerator::new(),
+            generating: HashSet::new(),
+
+            job_sender,
+
+            result_receiver,
         }
     }
 
@@ -45,10 +83,12 @@ impl ChunkManager {
         player_chunk_z: i32,
     ) {
 
-        self.load_chunks(
+        self.request_chunks(
             player_chunk_x,
             player_chunk_z,
         );
+
+        self.receive_chunks();
 
         self.unload_chunks(
             player_chunk_x,
@@ -56,7 +96,7 @@ impl ChunkManager {
         );
     }
 
-    fn load_chunks(
+    fn request_chunks(
         &mut self,
 
         player_chunk_x: i32,
@@ -77,32 +117,61 @@ impl ChunkManager {
                 player_chunk_z + RENDER_DISTANCE
             {
 
-                let key = (x, 0, z);
+                let key = (x, z);
 
-                if self.chunks.contains_key(&key) {
+                if self.generating.contains(&key) {
                     continue;
                 }
 
-                let chunk =
-                    self.terrain.generate_chunk(
+                if self.chunks.contains_key(
+                    &(x, 0, z)
+                ) {
+                    continue;
+                }
+
+                self.generating.insert(key);
+
+                self.job_sender.send(
+                    ChunkJob {
                         x,
-                        0,
                         z,
-                    );
-
-                self.chunks.insert(
-                    key,
-                    chunk,
-                );
-
-                self.render_data.insert(
-                    key,
-
-                    ChunkRenderData {
-                        mesh: None,
                     }
-                );
+                ).unwrap();
             }
+        }
+    }
+
+    fn receive_chunks(
+        &mut self,
+    ) {
+
+        while let Ok(result) =
+            self.result_receiver.try_recv()
+        {
+
+            let key =
+                (
+                    result.x,
+                    0,
+                    result.z,
+                );
+
+            self.chunks.insert(
+                key,
+                result.chunk,
+            );
+
+            self.render_data.insert(
+                key,
+
+                ChunkRenderData {
+                    mesh: None,
+                }
+            );
+
+            self.generating.remove(
+                &(result.x, result.z)
+            );
         }
     }
 

@@ -1,7 +1,7 @@
 use glam::Mat4;
 
 use crate::engine::camera::Camera;
-use crate::engine::chunk_mesh::ChunkMesh;
+use crate::engine::greedy_mesher::GreedyMesher;
 use crate::engine::mesh::Mesh;
 use crate::engine::shader::Shader;
 use crate::engine::world::World;
@@ -10,7 +10,7 @@ pub struct Renderer {
 
     shader: Shader,
 
-    meshes: Vec<Mesh>,
+    world: World,
 }
 
 impl Renderer {
@@ -44,7 +44,7 @@ impl Renderer {
             void main()
             {
                 FragColor = vec4(
-                    0.4,
+                    0.3,
                     0.8,
                     0.3,
                     1.0
@@ -52,45 +52,31 @@ impl Renderer {
             }
         "#;
 
-        let shader =
-            Shader::new(
-                vertex_shader,
-                fragment_shader,
-            );
-
-        let world =
-            World::new();
-
-        let mut meshes = Vec::new();
-
-        for (_, chunk) in &world.chunks {
-
-            let chunk_mesh =
-                ChunkMesh::build(chunk);
-
-            let mesh =
-                Mesh::from_vertices(
-                    &chunk_mesh.vertices
-                );
-
-            meshes.push(mesh);
-        }
-
         Self {
-            shader,
-            meshes,
+
+            shader:
+                Shader::new(
+                    vertex_shader,
+                    fragment_shader,
+                ),
+
+            world:
+                World::new(),
         }
     }
 
     pub fn render(
-        &self,
+        &mut self,
+
         camera: &Camera,
     ) {
 
-        self.shader.use_program();
+        self.world.update(
+            camera.position.x,
+            camera.position.z,
+        );
 
-        let model =
-            Mat4::IDENTITY;
+        self.shader.use_program();
 
         let view =
             camera.get_view_matrix();
@@ -104,11 +90,6 @@ impl Renderer {
             );
 
         self.shader.set_mat4(
-            "model",
-            &model,
-        );
-
-        self.shader.set_mat4(
             "view",
             &view,
         );
@@ -118,7 +99,33 @@ impl Renderer {
             &projection,
         );
 
-        for mesh in &self.meshes {
+        for ((chunk_x, chunk_y, chunk_z), chunk)
+        in
+        &self.world.chunk_manager.chunks
+        {
+
+            let vertices =
+                GreedyMesher::build(chunk);
+
+            let mesh =
+                Mesh::from_vertices(
+                    &vertices
+                );
+
+            let model =
+                Mat4::from_translation(
+                    glam::Vec3::new(
+                        *chunk_x as f32 * 16.0,
+                        *chunk_y as f32 * 16.0,
+                        *chunk_z as f32 * 16.0,
+                    )
+                );
+
+            self.shader.set_mat4(
+                "model",
+                &model,
+            );
+
             mesh.draw();
         }
     }

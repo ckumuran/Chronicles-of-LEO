@@ -25,3 +25,5 @@ pub mod chunk_render_data;
 pub mod raycast;
 
 pub mod physics;
+
+pub mod frustum;

@@ -5,3 +5,7 @@ pub mod camera;
 pub mod shader;
 pub mod mesh;
 pub mod renderer;
+
+pub mod block;
+pub mod chunk;
+pub mod world;

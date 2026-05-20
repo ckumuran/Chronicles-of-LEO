@@ -21,3 +21,5 @@ pub mod greedy_mesher;
 pub mod chunk_manager;
 
 pub mod chunk_render_data;
+
+pub mod raycast;

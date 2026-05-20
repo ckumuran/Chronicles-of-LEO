@@ -3,44 +3,20 @@ use crate::engine::chunk::{Chunk, CHUNK_SIZE};
 
 pub struct GreedyMesher;
 
+const TILE_SIZE: f32 = 1.0 / 16.0;
+
 impl GreedyMesher {
 
-    pub fn build(chunk: &Chunk) -> Vec<f32> {
+    pub fn build(
+        chunk: &Chunk
+    ) -> Vec<f32> {
 
-        let mut vertices = Vec::new();
-
-        Self::mesh_top(chunk, &mut vertices);
-        Self::mesh_bottom(chunk, &mut vertices);
-
-        Self::mesh_front(chunk, &mut vertices);
-        Self::mesh_back(chunk, &mut vertices);
-
-        Self::mesh_left(chunk, &mut vertices);
-        Self::mesh_right(chunk, &mut vertices);
-
-        vertices
-    }
-
-    fn mesh_top(
-        chunk: &Chunk,
-        vertices: &mut Vec<f32>,
-    ) {
-
-        let mut visited =
-            vec![false; CHUNK_SIZE * CHUNK_SIZE * CHUNK_SIZE];
+        let mut vertices =
+            Vec::new();
 
         for y in 0..CHUNK_SIZE {
             for z in 0..CHUNK_SIZE {
                 for x in 0..CHUNK_SIZE {
-
-                    let index =
-                        x +
-                        y * CHUNK_SIZE +
-                        z * CHUNK_SIZE * CHUNK_SIZE;
-
-                    if visited[index] {
-                        continue;
-                    }
 
                     let block =
                         chunk.get_block(x, y, z);
@@ -49,7 +25,13 @@ impl GreedyMesher {
                         continue;
                     }
 
-                    let visible =
+                    let x = x as f32;
+                    let y = y as f32;
+                    let z = z as f32;
+
+                    // TOP
+
+                    let visible_top =
                         if y + 1 >= CHUNK_SIZE {
 
                             true
@@ -57,462 +39,227 @@ impl GreedyMesher {
                         } else {
 
                             chunk.get_block(
-                                x,
-                                y + 1,
-                                z,
+                                x as usize,
+                                y as usize + 1,
+                                z as usize,
                             ) == BlockType::Air
                         };
 
-                    if !visible {
-                        continue;
+                    if visible_top {
+
+                        let uv =
+                            block.texture_index_top();
+
+                        Self::add_top_face(
+                            &mut vertices,
+
+                            x,y,z,
+
+                            uv,
+                        );
                     }
 
-                    let mut width = 1;
+                    // BOTTOM
 
-                    while x + width < CHUNK_SIZE {
-
-                        let next =
-                            chunk.get_block(
-                                x + width,
-                                y,
-                                z,
-                            );
-
-                        if next != block {
-                            break;
-                        }
-
-                        let visible =
-                            if y + 1 >= CHUNK_SIZE {
-
-                                true
-
-                            } else {
-
-                                chunk.get_block(
-                                    x + width,
-                                    y + 1,
-                                    z,
-                                ) == BlockType::Air
-                            };
-
-                        if !visible {
-                            break;
-                        }
-
-                        width += 1;
-                    }
-
-                    let mut height = 1;
-
-                    'height:
-                    while z + height < CHUNK_SIZE {
-
-                        for dx in 0..width {
-
-                            let next =
-                                chunk.get_block(
-                                    x + dx,
-                                    y,
-                                    z + height,
-                                );
-
-                            if next != block {
-                                break 'height;
-                            }
-
-                            let visible =
-                                if y + 1 >= CHUNK_SIZE {
-
-                                    true
-
-                                } else {
-
-                                    chunk.get_block(
-                                        x + dx,
-                                        y + 1,
-                                        z + height,
-                                    ) == BlockType::Air
-                                };
-
-                            if !visible {
-                                break 'height;
-                            }
-                        }
-
-                        height += 1;
-                    }
-
-                    for dz in 0..height {
-                        for dx in 0..width {
-
-                            let i =
-                                (x + dx) +
-                                y * CHUNK_SIZE +
-                                (z + dz) *
-                                CHUNK_SIZE *
-                                CHUNK_SIZE;
-
-                            visited[i] = true;
-                        }
-                    }
-
-                    Self::add_top_quad(
-                        vertices,
-
-                        x as f32,
-                        y as f32,
-                        z as f32,
-
-                        width as f32,
-                        height as f32,
-                    );
-                }
-            }
-        }
-    }
-
-    fn mesh_bottom(
-        chunk: &Chunk,
-        vertices: &mut Vec<f32>,
-    ) {
-
-        for y in 0..CHUNK_SIZE {
-            for z in 0..CHUNK_SIZE {
-                for x in 0..CHUNK_SIZE {
-
-                    let block =
-                        chunk.get_block(x, y, z);
-
-                    if block == BlockType::Air {
-                        continue;
-                    }
-
-                    let visible =
-                        if y == 0 {
+                    let visible_bottom =
+                        if y <= 0 {
 
                             true
 
                         } else {
 
                             chunk.get_block(
-                                x,
-                                y - 1,
-                                z,
+                                x as usize,
+                                y as usize - 1,
+                                z as usize,
                             ) == BlockType::Air
                         };
 
-                    if visible {
+                    if visible_bottom {
+
+                        let uv =
+                            block.texture_index_bottom();
 
                         Self::add_bottom_face(
-                            vertices,
+                            &mut vertices,
 
-                            x as f32,
-                            y as f32,
-                            z as f32,
+                            x,y,z,
+
+                            uv,
                         );
                     }
-                }
-            }
-        }
-    }
 
-    fn mesh_front(
-        chunk: &Chunk,
-        vertices: &mut Vec<f32>,
-    ) {
+                    // FRONT
 
-        for y in 0..CHUNK_SIZE {
-            for z in 0..CHUNK_SIZE {
-                for x in 0..CHUNK_SIZE {
-
-                    let block =
-                        chunk.get_block(x, y, z);
-
-                    if block == BlockType::Air {
-                        continue;
-                    }
-
-                    let visible =
-                        if z + 1 >= CHUNK_SIZE {
+                    let visible_front =
+                        if z as usize + 1 >= CHUNK_SIZE {
 
                             true
 
                         } else {
 
                             chunk.get_block(
-                                x,
-                                y,
-                                z + 1,
+                                x as usize,
+                                y as usize,
+                                z as usize + 1,
                             ) == BlockType::Air
                         };
 
-                    if visible {
+                    if visible_front {
+
+                        let uv =
+                            block.texture_index_side();
 
                         Self::add_front_face(
-                            vertices,
+                            &mut vertices,
 
-                            x as f32,
-                            y as f32,
-                            z as f32,
+                            x,y,z,
+
+                            uv,
                         );
                     }
-                }
-            }
-        }
-    }
 
-    fn mesh_back(
-        chunk: &Chunk,
-        vertices: &mut Vec<f32>,
-    ) {
+                    // BACK
 
-        for y in 0..CHUNK_SIZE {
-            for z in 0..CHUNK_SIZE {
-                for x in 0..CHUNK_SIZE {
-
-                    let block =
-                        chunk.get_block(x, y, z);
-
-                    if block == BlockType::Air {
-                        continue;
-                    }
-
-                    let visible =
-                        if z == 0 {
+                    let visible_back =
+                        if z <= 0.0 {
 
                             true
 
                         } else {
 
                             chunk.get_block(
-                                x,
-                                y,
-                                z - 1,
+                                x as usize,
+                                y as usize,
+                                z as usize - 1,
                             ) == BlockType::Air
                         };
 
-                    if visible {
+                    if visible_back {
+
+                        let uv =
+                            block.texture_index_side();
 
                         Self::add_back_face(
-                            vertices,
+                            &mut vertices,
 
-                            x as f32,
-                            y as f32,
-                            z as f32,
+                            x,y,z,
+
+                            uv,
                         );
                     }
-                }
-            }
-        }
-    }
 
-    fn mesh_left(
-        chunk: &Chunk,
-        vertices: &mut Vec<f32>,
-    ) {
+                    // LEFT
 
-        for y in 0..CHUNK_SIZE {
-            for z in 0..CHUNK_SIZE {
-                for x in 0..CHUNK_SIZE {
-
-                    let block =
-                        chunk.get_block(x, y, z);
-
-                    if block == BlockType::Air {
-                        continue;
-                    }
-
-                    let visible =
-                        if x == 0 {
+                    let visible_left =
+                        if x <= 0.0 {
 
                             true
 
                         } else {
 
                             chunk.get_block(
-                                x - 1,
-                                y,
-                                z,
+                                x as usize - 1,
+                                y as usize,
+                                z as usize,
                             ) == BlockType::Air
                         };
 
-                    if visible {
+                    if visible_left {
+
+                        let uv =
+                            block.texture_index_side();
 
                         Self::add_left_face(
-                            vertices,
+                            &mut vertices,
 
-                            x as f32,
-                            y as f32,
-                            z as f32,
+                            x,y,z,
+
+                            uv,
                         );
                     }
-                }
-            }
-        }
-    }
 
-    fn mesh_right(
-        chunk: &Chunk,
-        vertices: &mut Vec<f32>,
-    ) {
+                    // RIGHT
 
-        for y in 0..CHUNK_SIZE {
-            for z in 0..CHUNK_SIZE {
-                for x in 0..CHUNK_SIZE {
-
-                    let block =
-                        chunk.get_block(x, y, z);
-
-                    if block == BlockType::Air {
-                        continue;
-                    }
-
-                    let visible =
-                        if x + 1 >= CHUNK_SIZE {
+                    let visible_right =
+                        if x as usize + 1 >= CHUNK_SIZE {
 
                             true
 
                         } else {
 
                             chunk.get_block(
-                                x + 1,
-                                y,
-                                z,
+                                x as usize + 1,
+                                y as usize,
+                                z as usize,
                             ) == BlockType::Air
                         };
 
-                    if visible {
+                    if visible_right {
+
+                        let uv =
+                            block.texture_index_side();
 
                         Self::add_right_face(
-                            vertices,
+                            &mut vertices,
 
-                            x as f32,
-                            y as f32,
-                            z as f32,
+                            x,y,z,
+
+                            uv,
                         );
                     }
                 }
             }
         }
+
+        vertices
     }
 
-    fn add_top_quad(
+    fn uv_coords(
+        tile_x: u32,
+        tile_y: u32,
+    ) -> (f32, f32, f32, f32) {
+
+        let u0 =
+            tile_x as f32 * TILE_SIZE;
+
+        let v0 =
+            tile_y as f32 * TILE_SIZE;
+
+        let u1 =
+            u0 + TILE_SIZE;
+
+        let v1 =
+            v0 + TILE_SIZE;
+
+        (u0, v0, u1, v1)
+    }
+
+    fn add_top_face(
         vertices: &mut Vec<f32>,
 
         x: f32,
         y: f32,
         z: f32,
 
-        width: f32,
-        height: f32,
+        uv_tile: (u32, u32),
     ) {
 
-        let quad = [
-
-            x, y + 1.0, z,
-
-            x, y + 1.0, z + height,
-
-            x + width,
-            y + 1.0,
-            z + height,
-
-            x + width,
-            y + 1.0,
-            z + height,
-
-            x + width,
-            y + 1.0,
-            z,
-
-            x,
-            y + 1.0,
-            z,
-        ];
-
-        vertices.extend_from_slice(&quad);
-    }
-
-    fn add_front_face(
-        vertices: &mut Vec<f32>,
-        x: f32,
-        y: f32,
-        z: f32,
-    ) {
+        let (u0,v0,u1,v1) =
+            Self::uv_coords(
+                uv_tile.0,
+                uv_tile.1,
+            );
 
         let face = [
 
-            x,y,z+1.0,
-            x+1.0,y,z+1.0,
-            x+1.0,y+1.0,z+1.0,
+            x,y+1.0,z,      u0,v0,
+            x,y+1.0,z+1.0,  u0,v1,
+            x+1.0,y+1.0,z+1.0,u1,v1,
 
-            x+1.0,y+1.0,z+1.0,
-            x,y+1.0,z+1.0,
-            x,y,z+1.0,
-        ];
-
-        vertices.extend_from_slice(&face);
-    }
-
-    fn add_back_face(
-        vertices: &mut Vec<f32>,
-        x: f32,
-        y: f32,
-        z: f32,
-    ) {
-
-        let face = [
-
-            x,y,z,
-            x,y+1.0,z,
-            x+1.0,y+1.0,z,
-
-            x+1.0,y+1.0,z,
-            x+1.0,y,z,
-            x,y,z,
-        ];
-
-        vertices.extend_from_slice(&face);
-    }
-
-    fn add_left_face(
-        vertices: &mut Vec<f32>,
-        x: f32,
-        y: f32,
-        z: f32,
-    ) {
-
-        let face = [
-
-            x,y+1.0,z+1.0,
-            x,y+1.0,z,
-            x,y,z,
-
-            x,y,z,
-            x,y,z+1.0,
-            x,y+1.0,z+1.0,
-        ];
-
-        vertices.extend_from_slice(&face);
-    }
-
-    fn add_right_face(
-        vertices: &mut Vec<f32>,
-        x: f32,
-        y: f32,
-        z: f32,
-    ) {
-
-        let face = [
-
-            x+1.0,y+1.0,z+1.0,
-            x+1.0,y,z,
-            x+1.0,y+1.0,z,
-
-            x+1.0,y,z,
-            x+1.0,y+1.0,z+1.0,
-            x+1.0,y,z+1.0,
+            x+1.0,y+1.0,z+1.0,u1,v1,
+            x+1.0,y+1.0,z,u1,v0,
+            x,y+1.0,z,u0,v0,
         ];
 
         vertices.extend_from_slice(&face);
@@ -520,20 +267,149 @@ impl GreedyMesher {
 
     fn add_bottom_face(
         vertices: &mut Vec<f32>,
+
         x: f32,
         y: f32,
         z: f32,
+
+        uv_tile: (u32, u32),
     ) {
+
+        let (u0,v0,u1,v1) =
+            Self::uv_coords(
+                uv_tile.0,
+                uv_tile.1,
+            );
 
         let face = [
 
-            x,y,z,
-            x+1.0,y,z,
-            x+1.0,y,z+1.0,
+            x,y,z,u0,v0,
+            x+1.0,y,z,u1,v0,
+            x+1.0,y,z+1.0,u1,v1,
 
-            x+1.0,y,z+1.0,
-            x,y,z+1.0,
-            x,y,z,
+            x+1.0,y,z+1.0,u1,v1,
+            x,y,z+1.0,u0,v1,
+            x,y,z,u0,v0,
+        ];
+
+        vertices.extend_from_slice(&face);
+    }
+
+    fn add_front_face(
+        vertices: &mut Vec<f32>,
+
+        x: f32,
+        y: f32,
+        z: f32,
+
+        uv_tile: (u32, u32),
+    ) {
+
+        let (u0,v0,u1,v1) =
+            Self::uv_coords(
+                uv_tile.0,
+                uv_tile.1,
+            );
+
+        let face = [
+
+            x,y,z+1.0,u0,v0,
+            x+1.0,y,z+1.0,u1,v0,
+            x+1.0,y+1.0,z+1.0,u1,v1,
+
+            x+1.0,y+1.0,z+1.0,u1,v1,
+            x,y+1.0,z+1.0,u0,v1,
+            x,y,z+1.0,u0,v0,
+        ];
+
+        vertices.extend_from_slice(&face);
+    }
+
+    fn add_back_face(
+        vertices: &mut Vec<f32>,
+
+        x: f32,
+        y: f32,
+        z: f32,
+
+        uv_tile: (u32, u32),
+    ) {
+
+        let (u0,v0,u1,v1) =
+            Self::uv_coords(
+                uv_tile.0,
+                uv_tile.1,
+            );
+
+        let face = [
+
+            x,y,z,u0,v0,
+            x,y+1.0,z,u0,v1,
+            x+1.0,y+1.0,z,u1,v1,
+
+            x+1.0,y+1.0,z,u1,v1,
+            x+1.0,y,z,u1,v0,
+            x,y,z,u0,v0,
+        ];
+
+        vertices.extend_from_slice(&face);
+    }
+
+    fn add_left_face(
+        vertices: &mut Vec<f32>,
+
+        x: f32,
+        y: f32,
+        z: f32,
+
+        uv_tile: (u32, u32),
+    ) {
+
+        let (u0,v0,u1,v1) =
+            Self::uv_coords(
+                uv_tile.0,
+                uv_tile.1,
+            );
+
+        let face = [
+
+            x,y+1.0,z+1.0,u1,v1,
+            x,y+1.0,z,u0,v1,
+            x,y,z,u0,v0,
+
+            x,y,z,u0,v0,
+            x,y,z+1.0,u1,v0,
+            x,y+1.0,z+1.0,u1,v1,
+        ];
+
+        vertices.extend_from_slice(&face);
+    }
+
+    fn add_right_face(
+        vertices: &mut Vec<f32>,
+
+        x: f32,
+        y: f32,
+        z: f32,
+
+        uv_tile: (u32, u32),
+    ) {
+
+        let (u0,v0,u1,v1) =
+            Self::uv_coords(
+                uv_tile.0,
+                uv_tile.1,
+            );
+
+        let face = [
+
+            x+1.0,y+1.0,z+1.0,u1,v1,
+            x+1.0,y,z,u0,v0,
+            x+1.0,y+1.0,z,u0,v1,
+
+            x+1.0,y,z,u0,v0,
+            x+1.0,y+1.0,z+1.0,u1,v1,
+            x+1.0,y,z+1.0,u1,v0,
         ];
 
         vertices.extend_from_slice(&face);

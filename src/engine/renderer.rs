@@ -5,6 +5,9 @@ use crate::engine::greedy_mesher::GreedyMesher;
 use crate::engine::mesh::Mesh;
 use crate::engine::shader::Shader;
 use crate::engine::world::World;
+use crate::engine::block::BlockType;
+use crate::engine::input::Input;
+use crate::engine::raycast::Raycaster;
 
 pub struct Renderer {
 

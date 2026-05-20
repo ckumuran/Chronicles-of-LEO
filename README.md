@@ -2631,7 +2631,3 @@ VRAM (GPU):
 - **glam** — SIMD-friendly math library. Vec3, Mat4, all vectorized.
 - **crossbeam** — Lock-free concurrent data structures.
 - **serde** — Serialization. Makes saving the world trivial.
-
-> If you're reading this and thinking "I could build something like this," you absolutely could. The hardest part is the first 80 hours. After that, it's momentum.
-
-> ⭐ If you found this interesting, star it. If you have ideas, fork it. If you want to talk about voxel rendering, DM me.

@@ -1,29 +1,19 @@
 pub mod window;
 pub mod input;
 pub mod camera;
-
 pub mod shader;
 pub mod mesh;
 pub mod renderer;
-
 pub mod block;
 pub mod chunk;
 pub mod world;
-
 pub mod chunk_mesh;
-
 pub mod face_culling;
-
 pub mod terrain;
-
 pub mod greedy_mesher;
-
 pub mod chunk_manager;
-
 pub mod chunk_render_data;
-
 pub mod raycast;
-
 pub mod physics;
-
 pub mod frustum;
+pub mod chunk_worker;

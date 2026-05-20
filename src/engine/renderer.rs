@@ -99,25 +99,53 @@ impl Renderer {
             &projection,
         );
 
-        for ((chunk_x, chunk_y, chunk_z), chunk)
-        in
-        &self.world.chunk_manager.chunks
-        {
+        let chunk_keys: Vec<_> =
+            self.world
+                .chunk_manager
+                .chunks
+                .keys()
+                .cloned()
+                .collect();
 
-            let vertices =
-                GreedyMesher::build(chunk);
+        for key in chunk_keys {
 
-            let mesh =
-                Mesh::from_vertices(
-                    &vertices
-                );
+            let chunk =
+                self.world
+                    .chunk_manager
+                    .chunks
+                    .get_mut(&key)
+                    .unwrap();
+
+            let render_data =
+                self.world
+                    .chunk_manager
+                    .render_data
+                    .get_mut(&key)
+                    .unwrap();
+
+            // REMESH ONLY IF DIRTY
+
+            if chunk.dirty {
+
+                let vertices =
+                    GreedyMesher::build(chunk);
+
+                render_data.mesh =
+                    Some(
+                        Mesh::from_vertices(
+                            &vertices
+                        )
+                    );
+
+                chunk.dirty = false;
+            }
 
             let model =
                 Mat4::from_translation(
                     glam::Vec3::new(
-                        *chunk_x as f32 * 16.0,
-                        *chunk_y as f32 * 16.0,
-                        *chunk_z as f32 * 16.0,
+                        key.0 as f32 * 16.0,
+                        key.1 as f32 * 16.0,
+                        key.2 as f32 * 16.0,
                     )
                 );
 
@@ -126,7 +154,11 @@ impl Renderer {
                 &model,
             );
 
-            mesh.draw();
+            if let Some(mesh) =
+                &render_data.mesh
+            {
+                mesh.draw();
+            }
         }
     }
 }

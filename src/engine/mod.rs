@@ -17,3 +17,5 @@ pub mod face_culling;
 pub mod terrain;
 
 pub mod greedy_mesher;
+
+pub mod chunk_manager;

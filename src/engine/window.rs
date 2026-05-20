@@ -2,6 +2,7 @@ use glfw::{Action, Context, CursorMode, Key};
 
 use crate::engine::camera::Camera;
 use crate::engine::input::Input;
+use crate::engine::renderer::Renderer;
 
 use std::time::Instant;
 
@@ -12,6 +13,8 @@ pub struct Window {
 
     input: Input,
     camera: Camera,
+
+    renderer: Renderer,
 
     last_frame: Instant,
 }
@@ -34,7 +37,7 @@ impl Window {
                 title,
                 glfw::WindowMode::Windowed,
             )
-            .expect("Failed to create window");
+            .expect("Failed to create GLFW window");
 
         window.make_current();
 
@@ -44,7 +47,8 @@ impl Window {
         window.set_cursor_mode(CursorMode::Disabled);
 
         gl::load_with(|symbol| {
-            window.get_proc_address(symbol)
+            window
+                .get_proc_address(symbol)
                 .map_or(std::ptr::null(), |p| p as *const _)
         });
 
@@ -61,6 +65,8 @@ impl Window {
 
             input: Input::new(),
             camera: Camera::new(),
+
+            renderer: Renderer::new(),
 
             last_frame: Instant::now(),
         }
@@ -84,7 +90,12 @@ impl Window {
             self.input.handle_event(&event);
 
             match event {
-                glfw::WindowEvent::Key(Key::Escape, _, Action::Press, _) => {
+                glfw::WindowEvent::Key(
+                    Key::Escape,
+                    _,
+                    Action::Press,
+                    _,
+                ) => {
                     self.window.set_should_close(true);
                 }
 
@@ -101,8 +112,13 @@ impl Window {
         unsafe {
             gl::ClearColor(0.4, 0.7, 1.0, 1.0);
 
-            gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+            gl::Clear(
+                gl::COLOR_BUFFER_BIT |
+                gl::DEPTH_BUFFER_BIT
+            );
         }
+
+        self.renderer.render();
 
         self.window.swap_buffers();
     }

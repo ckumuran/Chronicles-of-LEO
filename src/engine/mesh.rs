@@ -53,7 +53,7 @@ impl Mesh {
             );
 
             let stride =
-                5 * mem::size_of::<f32>();
+                6 * mem::size_of::<f32>();
 
             // POSITION
 
@@ -82,6 +82,21 @@ impl Mesh {
             );
 
             gl::EnableVertexAttribArray(1);
+
+            // AO
+
+            gl::VertexAttribPointer(
+                2,
+                1,
+                gl::FLOAT,
+                gl::FALSE,
+                stride as i32,
+
+                (5 * mem::size_of::<f32>())
+                    as *const c_void,
+            );
+
+            gl::EnableVertexAttribArray(2);
         }
 
         Self {
@@ -90,7 +105,7 @@ impl Mesh {
             vbo,
 
             vertex_count:
-                (vertices.len() / 5) as i32,
+                (vertices.len() / 6) as i32,
         }
     }
 

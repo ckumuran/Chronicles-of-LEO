@@ -1,5 +1,7 @@
 use gl::types::*;
 
+use glam::Mat4;
+
 use std::ffi::CString;
 use std::ptr;
 
@@ -28,23 +30,7 @@ impl Shader {
             gl::GetProgramiv(program, gl::LINK_STATUS, &mut success);
 
             if success == 0 {
-                let mut log_length = 0;
-
-                gl::GetProgramiv(program, gl::INFO_LOG_LENGTH, &mut log_length);
-
-                let mut buffer = vec![0u8; log_length as usize];
-
-                gl::GetProgramInfoLog(
-                    program,
-                    log_length,
-                    ptr::null_mut(),
-                    buffer.as_mut_ptr() as *mut GLchar,
-                );
-
-                panic!(
-                    "Shader linking failed:\n{}",
-                    String::from_utf8_lossy(&buffer)
-                );
+                panic!("Shader linking failed");
             }
 
             gl::DeleteShader(vertex_shader);
@@ -69,23 +55,7 @@ impl Shader {
             gl::GetShaderiv(shader, gl::COMPILE_STATUS, &mut success);
 
             if success == 0 {
-                let mut log_length = 0;
-
-                gl::GetShaderiv(shader, gl::INFO_LOG_LENGTH, &mut log_length);
-
-                let mut buffer = vec![0u8; log_length as usize];
-
-                gl::GetShaderInfoLog(
-                    shader,
-                    log_length,
-                    ptr::null_mut(),
-                    buffer.as_mut_ptr() as *mut GLchar,
-                );
-
-                panic!(
-                    "Shader compilation failed:\n{}",
-                    String::from_utf8_lossy(&buffer)
-                );
+                panic!("Shader compilation failed");
             }
 
             shader
@@ -95,6 +65,22 @@ impl Shader {
     pub fn use_program(&self) {
         unsafe {
             gl::UseProgram(self.id);
+        }
+    }
+
+    pub fn set_mat4(&self, name: &str, matrix: &Mat4) {
+        unsafe {
+            let c_name = CString::new(name).unwrap();
+
+            let location =
+                gl::GetUniformLocation(self.id, c_name.as_ptr());
+
+            gl::UniformMatrix4fv(
+                location,
+                1,
+                gl::FALSE,
+                matrix.to_cols_array().as_ptr(),
+            );
         }
     }
 }

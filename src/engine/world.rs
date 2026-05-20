@@ -1,55 +1,36 @@
-use std::collections::HashMap;
-
-use crate::engine::chunk::Chunk;
-use crate::engine::terrain::TerrainGenerator;
+use crate::engine::chunk_manager::ChunkManager;
 
 pub struct World {
-    pub chunks: HashMap<(i32, i32, i32), Chunk>,
+
+    pub chunk_manager: ChunkManager,
 }
 
 impl World {
 
     pub fn new() -> Self {
 
-        let mut world = Self {
-            chunks: HashMap::new(),
-        };
-
-        world.generate();
-
-        world
-    }
-
-    fn generate(&mut self) {
-
-        let terrain =
-            TerrainGenerator::new();
-
-        for chunk_x in -2..=2 {
-            for chunk_z in -2..=2 {
-
-                let chunk =
-                    terrain.generate_chunk(
-                        chunk_x,
-                        0,
-                        chunk_z,
-                    );
-
-                self.chunks.insert(
-                    (chunk_x, 0, chunk_z),
-                    chunk,
-                );
-            }
+        Self {
+            chunk_manager:
+                ChunkManager::new(),
         }
     }
 
-    pub fn get_chunk(
-        &self,
-        x: i32,
-        y: i32,
-        z: i32,
-    ) -> Option<&Chunk> {
+    pub fn update(
+        &mut self,
 
-        self.chunks.get(&(x, y, z))
+        player_x: f32,
+        player_z: f32,
+    ) {
+
+        let player_chunk_x =
+            (player_x / 16.0).floor() as i32;
+
+        let player_chunk_z =
+            (player_z / 16.0).floor() as i32;
+
+        self.chunk_manager.update(
+            player_chunk_x,
+            player_chunk_z,
+        );
     }
 }

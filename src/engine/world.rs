@@ -1,52 +1,46 @@
 use std::collections::HashMap;
 
-use crate::engine::block::BlockType;
-use crate::engine::chunk::{Chunk, CHUNK_SIZE};
+use crate::engine::chunk::Chunk;
+use crate::engine::terrain::TerrainGenerator;
 
 pub struct World {
     pub chunks: HashMap<(i32, i32, i32), Chunk>,
 }
 
 impl World {
+
     pub fn new() -> Self {
+
         let mut world = Self {
             chunks: HashMap::new(),
         };
 
-        world.generate_test_world();
+        world.generate();
 
         world
     }
 
-    fn generate_test_world(&mut self) {
-        let mut chunk = Chunk::new(0, 0, 0);
+    fn generate(&mut self) {
 
-        for x in 0..CHUNK_SIZE {
-            for z in 0..CHUNK_SIZE {
-                chunk.set_block(
-                    x,
-                    0,
-                    z,
-                    BlockType::Grass,
-                );
+        let terrain =
+            TerrainGenerator::new();
 
-                chunk.set_block(
-                    x,
-                    1,
-                    z,
-                    BlockType::Dirt,
-                );
+        for chunk_x in -2..=2 {
+            for chunk_z in -2..=2 {
 
-                chunk.set_block(
-                    x,
-                    2,
-                    z,
-                    BlockType::Stone,
+                let chunk =
+                    terrain.generate_chunk(
+                        chunk_x,
+                        0,
+                        chunk_z,
+                    );
+
+                self.chunks.insert(
+                    (chunk_x, 0, chunk_z),
+                    chunk,
                 );
             }
         }
-
-        self.chunks.insert((0, 0, 0), chunk);
     }
 
     pub fn get_chunk(
@@ -55,6 +49,7 @@ impl World {
         y: i32,
         z: i32,
     ) -> Option<&Chunk> {
+
         self.chunks.get(&(x, y, z))
     }
 }

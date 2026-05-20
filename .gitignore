@@ -1,3 +1,35 @@
-node_modules
-dist
-.vscode
+# Rust
+target/
+debug/
+release/
+
+# Cargo
+Cargo.lock
+
+# Assets cache
+assets/cache/
+
+# Saves
+saves/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp
+*.tmp
+*.bak
+
+# Build artifacts
+*.rlib
+*.rmeta
+
+# Environment
+.env

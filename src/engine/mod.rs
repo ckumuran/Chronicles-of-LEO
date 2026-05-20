@@ -17,3 +17,4 @@ pub mod raycast;
 pub mod physics;
 pub mod frustum;
 pub mod chunk_worker;
+pub mod mesh_worker;

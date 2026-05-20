@@ -19,3 +19,5 @@ pub mod terrain;
 pub mod greedy_mesher;
 
 pub mod chunk_manager;
+
+pub mod chunk_render_data;

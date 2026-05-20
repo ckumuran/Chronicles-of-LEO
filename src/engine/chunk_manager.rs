@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use crate::engine::chunk::Chunk;
+use crate::engine::chunk_render_data::ChunkRenderData;
 use crate::engine::terrain::TerrainGenerator;
 
 pub const RENDER_DISTANCE: i32 = 4;
@@ -8,7 +9,16 @@ pub const RENDER_DISTANCE: i32 = 4;
 pub struct ChunkManager {
 
     pub chunks:
-        HashMap<(i32, i32, i32), Chunk>,
+        HashMap<
+            (i32, i32, i32),
+            Chunk
+        >,
+
+    pub render_data:
+        HashMap<
+            (i32, i32, i32),
+            ChunkRenderData
+        >,
 
     terrain: TerrainGenerator,
 }
@@ -18,7 +28,10 @@ impl ChunkManager {
     pub fn new() -> Self {
 
         Self {
+
             chunks: HashMap::new(),
+
+            render_data: HashMap::new(),
 
             terrain:
                 TerrainGenerator::new(),
@@ -81,6 +94,14 @@ impl ChunkManager {
                     key,
                     chunk,
                 );
+
+                self.render_data.insert(
+                    key,
+
+                    ChunkRenderData {
+                        mesh: None,
+                    }
+                );
             }
         }
     }
@@ -93,6 +114,20 @@ impl ChunkManager {
     ) {
 
         self.chunks.retain(
+            |&(x, _, z), _| {
+
+                let dx =
+                    (x - player_chunk_x).abs();
+
+                let dz =
+                    (z - player_chunk_z).abs();
+
+                dx <= RENDER_DISTANCE &&
+                dz <= RENDER_DISTANCE
+            }
+        );
+
+        self.render_data.retain(
             |&(x, _, z), _| {
 
                 let dx =

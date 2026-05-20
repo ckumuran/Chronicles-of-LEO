@@ -9,3 +9,5 @@ pub mod renderer;
 pub mod block;
 pub mod chunk;
 pub mod world;
+
+pub mod chunk_mesh;

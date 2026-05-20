@@ -11,3 +11,5 @@ pub mod chunk;
 pub mod world;
 
 pub mod chunk_mesh;
+
+pub mod face_culling;

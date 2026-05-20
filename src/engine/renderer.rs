@@ -1,4 +1,4 @@
-use glam::{Mat4, Vec3};
+use glam::Mat4;
 
 use crate::engine::camera::Camera;
 use crate::engine::chunk_mesh::ChunkMesh;
@@ -7,12 +7,14 @@ use crate::engine::shader::Shader;
 use crate::engine::world::World;
 
 pub struct Renderer {
+
     shader: Shader,
 
-    mesh: Mesh,
+    meshes: Vec<Mesh>,
 }
 
 impl Renderer {
+
     pub fn new() -> Self {
 
         let vertex_shader = r#"
@@ -42,34 +44,41 @@ impl Renderer {
             void main()
             {
                 FragColor = vec4(
-                    0.7,
-                    0.2,
-                    0.2,
+                    0.4,
+                    0.8,
+                    0.3,
                     1.0
                 );
             }
         "#;
 
-        let world = World::new();
-
-        let chunk =
-            world.get_chunk(0,0,0).unwrap();
-
-        let chunk_mesh =
-            ChunkMesh::build(chunk);
-
-        let mesh =
-            Mesh::from_vertices(
-                &chunk_mesh.vertices
-            );
-
-        Self {
-            shader: Shader::new(
+        let shader =
+            Shader::new(
                 vertex_shader,
                 fragment_shader,
-            ),
+            );
 
-            mesh,
+        let world =
+            World::new();
+
+        let mut meshes = Vec::new();
+
+        for (_, chunk) in &world.chunks {
+
+            let chunk_mesh =
+                ChunkMesh::build(chunk);
+
+            let mesh =
+                Mesh::from_vertices(
+                    &chunk_mesh.vertices
+                );
+
+            meshes.push(mesh);
+        }
+
+        Self {
+            shader,
+            meshes,
         }
     }
 
@@ -77,6 +86,7 @@ impl Renderer {
         &self,
         camera: &Camera,
     ) {
+
         self.shader.use_program();
 
         let model =
@@ -108,6 +118,8 @@ impl Renderer {
             &projection,
         );
 
-        self.mesh.draw();
+        for mesh in &self.meshes {
+            mesh.draw();
+        }
     }
 }

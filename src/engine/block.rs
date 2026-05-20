@@ -6,6 +6,8 @@ pub enum BlockType {
     Grass,
     Dirt,
     Stone,
+
+    Water,
 }
 
 impl BlockType {
@@ -16,7 +18,21 @@ impl BlockType {
 
             BlockType::Air => false,
 
+            BlockType::Water => false,
+
             _ => true,
+        }
+    }
+
+    pub fn is_transparent(
+        &self
+    ) -> bool {
+
+        match self {
+
+            BlockType::Water => true,
+
+            _ => false,
         }
     }
 
@@ -31,6 +47,8 @@ impl BlockType {
             BlockType::Dirt => (2, 0),
 
             BlockType::Stone => (3, 0),
+
+            BlockType::Water => (4, 0),
 
             _ => (0, 0),
         }
@@ -48,6 +66,8 @@ impl BlockType {
 
             BlockType::Stone => (3, 0),
 
+            BlockType::Water => (4, 0),
+
             _ => (0, 0),
         }
     }
@@ -63,6 +83,8 @@ impl BlockType {
             BlockType::Dirt => (2, 0),
 
             BlockType::Stone => (3, 0),
+
+            BlockType::Water => (4, 0),
 
             _ => (0, 0),
         }

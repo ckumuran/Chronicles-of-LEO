@@ -13,3 +13,5 @@ pub mod world;
 pub mod chunk_mesh;
 
 pub mod face_culling;
+
+pub mod terrain;

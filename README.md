@@ -2610,9 +2610,6 @@ VRAM (GPU):
 ## 27. ScreenShots
 
 ![BRIXIT Gameplay](./src/BRIXIT.png)
-### Built by
-
-**C.Kumaran** 
 
 ### Technologies
 
@@ -2622,3 +2619,5 @@ VRAM (GPU):
 - **glam** — SIMD-friendly math library. Vec3, Mat4, all vectorized.
 - **crossbeam** — Lock-free concurrent data structures.
 - **serde** — Serialization. Makes saving the world trivial.
+
+# Built by C.Kumaran 

@@ -1,8 +1,6 @@
 > *A LEGO-inspired voxel sandbox engine built from scratch in Rust and OpenGL.*
 
-```
 BRIXIT
-```
 
 > **Tech Stack:** Rust · OpenGL 4.5 · GLFW · glam · Custom Engine  
 > **Type:** Native Voxel Engine + Creative Sandbox Game  
